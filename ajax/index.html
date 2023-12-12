@@ -1,1 +1,90 @@
+<!DOCTYPE html>
+<html lang="ru">
 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajax</title>
+    <style>
+        #goods {
+            border: 1px solid #000;
+            max-width: 500px;
+            width: 100%;
+            padding: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .good {
+            border: 1px solid #000;
+            border-radius: 10px;
+            width: 150px;
+            height: 110px;
+            text-align: center;
+            box-shadow: 4px 4px 9px 0px;
+        }
+
+        .good__price {
+            color: navy;
+        }
+
+        .load {
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Список товаров</h1>
+    <button class="load">загрузить товары</button>
+    <div id="goods">
+    </div>
+    <script>
+        const state = new Proxy(
+            {
+                goods: []
+            },
+            {
+                set(target, path, value) {
+                    target[path] = value
+                    if (path === 'goods') {
+                        createGoodsHtmlElements(state)
+                    }
+                }
+            }
+        )
+
+        const selectors = ['#goods', '.load']
+        const [goodsEl, buttonLoadEL] = selectors.map(selector => document.querySelector(selector))
+
+        const createGoodsHtmlElements = (state) => {
+            const { goods } = state
+            goodsEl.innerHTML = ''
+            goods.forEach(good => {
+                const titleEL = document.createElement('h2')
+                titleEL.classList.add('good__title')
+                titleEL.textContent = good.name
+                const priceEl = document.createElement('h3')
+                priceEl.classList.add('good__price')
+                priceEl.textContent = good.price
+                const goodEl = document.createElement('div')
+                goodEl.classList.add('good')
+
+                goodEl.append(titleEL, priceEl)
+                goodsEl.append(goodEl)
+            });
+        }
+        buttonLoadEL.addEventListener('click', function (e) {
+            fetch('/goods').then(res => {
+                return res.json();
+            }).then(data => {
+                state.goods = data
+            })
+                .catch(e => console.log(e))
+        });
+    </script>
+</body>
+
+</html>
