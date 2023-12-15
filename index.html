@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rest API</title>
+</head>
+
+<body>
+    <button id="update">Обновить цену товара 1 на 2000</button>
+    <button id="delete">Удалить товар 2</button>
+</body>
+<script>
+    const updateEl = document.querySelector('#update');
+    const deleteEl = document.querySelector('#delete');
+    updateEl.addEventListener('click', function (e) {
+        fetch('/goods/1', {
+            method: 'PATCH',
+            body: JSON.stringify({
+                price: 2000,
+            }),
+            headers: {
+                'Content-type': 'application/json',
+                'Accept': 'application/json'
+            },
+        })
+            .then((res) => console.log(res.status))
+            .catch((e) => console.log(e));
+    });
+
+    deleteEl.addEventListener('click', function (e) {
+        fetch('/goods/2', {
+            method: 'DELETE'
+        })
+            .then((res) => console.log(res.status))
+            .catch((e) => console.log(e));
+    });
+</script>
+
+</html>
